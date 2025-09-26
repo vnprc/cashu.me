@@ -64,6 +64,16 @@ export const useReceiveTokensStore = defineStore("receiveTokensStore", {
       if (tokenJson == undefined) {
         throw new Error("no tokens provided.");
       }
+      
+      // Block real money tokens (sat, msat, usd, eur)
+      const tokenUnit = token.getUnit(tokenJson);
+      const blockedUnits = ["sat", "msat", "usd", "eur"];
+      if (blockedUnits.includes(tokenUnit)) {
+        const errorMsg = `This wallet only accepts currency unit: HASH`;
+        notifyError(errorMsg);
+        throw new Error(errorMsg);
+      }
+      
       // check if we have all mints
       if (!this.knowThisMintOfTokenJson(tokenJson)) {
         // add the mint

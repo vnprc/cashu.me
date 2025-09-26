@@ -145,16 +145,12 @@ window.windowMixin = {
       if (useUiStore().hideBalance && !showBalance) {
         return "****";
       }
-      if (currency == "sat") return this.formatSat(value);
-      if (currency == "msat") return this.fromMsat(value);
-      if (currency == "hash")
+      // Only support HASH currency
+      if (currency == "hash") {
         return new Intl.NumberFormat(window.LOCALE).format(value) + " HASH";
-      if (currency == "usd") value = value / 100;
-      if (currency == "eur") value = value / 100;
-      return new Intl.NumberFormat(window.LOCALE, {
-        style: "currency",
-        currency: currency,
-      }).format(value);
+      }
+      // Default to HASH for any other currency
+      return new Intl.NumberFormat(window.LOCALE).format(value) + " " + currency.toUpperCase();
       // + " " +
       // currency.toUpperCase()
     },

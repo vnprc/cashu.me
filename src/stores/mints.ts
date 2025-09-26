@@ -211,32 +211,16 @@ export const useMintsStore = defineStore("mints", {
       );
     },
     activeUnitLabel({ activeUnit }): string {
-      if (activeUnit == "sat") {
-        if (this.settingsStoreGlobal.bip177BitcoinSymbol) {
-          return "₿";
-        } else {
-          return "SAT";
-        }
-      } else if (activeUnit == "usd") {
-        return "USD";
-      } else if (activeUnit == "eur") {
-        return "EUR";
-      } else if (activeUnit == "msat") {
-        return "mSAT";
-      } else if (activeUnit == "hash") {
+      // Only support HASH and other non-monetary units
+      if (activeUnit == "hash") {
         return "HASH";
       } else {
-        return activeUnit;
+        return activeUnit.toUpperCase();
       }
     },
     activeUnitCurrencyMultiplyer({ activeUnit }): number {
-      if (activeUnit == "usd") {
-        return 100;
-      } else if (activeUnit == "eur") {
-        return 100;
-      } else {
-        return 1;
-      }
+      // No currency multipliers for non-monetary units
+      return 1;
     },
     allMintKeysets: function () {
       return [].concat(...this.mints.map((m) => m.keysets));
@@ -584,7 +568,10 @@ export const useMintsStore = defineStore("mints", {
       try {
         const mintClass = new MintClass(mint);
         const data = await mintClass.api.getKeySets();
-        const keysets = data.keysets;
+        // Filter out real money units (sat, msat, usd, eur) to prevent actual Bitcoin transactions
+        const keysets = data.keysets.filter((k: MintKeyset) =>
+          k.unit !== "sat" && k.unit !== "msat" && k.unit !== "usd" && k.unit !== "eur"
+        );
         if (keysets.length > 0) {
           // check for keyset id collisions with other mints
           await this.checkForMintKeysetIdCollisions(mint, keysets);

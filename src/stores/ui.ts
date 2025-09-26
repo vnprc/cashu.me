@@ -15,11 +15,8 @@ import ts from "typescript";
 import { useSettingsStore } from "./settings";
 
 const unitTickerShortMap = {
-  sat: "sats",
-  usd: "USD",
-  eur: "EUR",
-  msat: "msats",
   hash: "HASH",
+  // Support any other non-monetary units
 };
 
 export const useUiStore = defineStore("ui", {
@@ -104,18 +101,12 @@ export const useUiStore = defineStore("ui", {
       if (useUiStore().hideBalance && !showBalance) {
         return "****";
       }
-      if (currency == "sat") return this.formatSat(value);
-      if (currency == "msat") return this.fromMsat(value);
-      if (currency == "hash")
-        return (
-          new Intl.NumberFormat(navigator.language).format(value) + " HASH"
-        );
-      if (currency == "usd") value = value / 100;
-      if (currency == "eur") value = value / 100;
-      return new Intl.NumberFormat(navigator.language, {
-        style: "currency",
-        currency: currency,
-      }).format(value);
+      // Only support HASH and other non-monetary units
+      if (currency == "hash") {
+        return new Intl.NumberFormat(navigator.language).format(value) + " HASH";
+      }
+      // Default formatting for other non-monetary units
+      return new Intl.NumberFormat(navigator.language).format(value) + " " + currency.toUpperCase();
       // + " " +
       // currency.toUpperCase()
     },
