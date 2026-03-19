@@ -147,6 +147,8 @@ window.windowMixin = {
       }
       if (currency == "sat") return this.formatSat(value);
       if (currency == "msat") return this.fromMsat(value);
+      if (currency == "hash")
+        return new Intl.NumberFormat(window.LOCALE).format(value) + " HASH";
       if (currency == "usd") value = value / 100;
       if (currency == "eur") value = value / 100;
       return new Intl.NumberFormat(window.LOCALE, {
