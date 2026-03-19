@@ -223,6 +223,8 @@ export const useMintsStore = defineStore("mints", {
         return "EUR";
       } else if (activeUnit == "msat") {
         return "mSAT";
+      } else if (activeUnit == "hash") {
+        return "HASH";
       } else {
         return activeUnit;
       }
